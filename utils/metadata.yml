@@ -1,0 +1,90 @@
+# Weather Data Metadata
+
+file_format: CSV
+time_zone: ET
+
+columns:
+  - name: tNow
+    description: Timestamp of the data record
+    unit: datetime
+    data_type: datetime
+
+  - name: u_m_s
+    description: Wind speed component in the x-direction
+    unit: meters per second
+    data_type: float
+
+  - name: v_m_s
+    description: Wind speed component in the y-direction
+    unit: meters per second
+    data_type: float
+
+  - name: w_m_s
+    description: Wind speed component in the z-direction
+    unit: meters per second
+    data_type: float
+
+  - name: 2dSpeed_m_s
+    description: Total wind speed in the horizontal plane (2D vector magnitude of u and v)
+    unit: meters per second
+    data_type: float
+
+  - name: 3DSpeed_m_s
+    description: Total wind speed (3D vector magnitude of u, v, and w)
+    unit: meters per second
+    data_type: float
+
+  - name: Azimuth_deg
+    description: Wind direction in the horizontal plane
+    unit: degrees
+    range: 0 to 360
+    data_type: float
+    notes:
+      - "Measured clockwise from north"
+      - "0° indicates wind is coming from the north"
+      - "90° indicates wind is coming from the east"
+      - "180° indicates wind is coming from the south"
+      - "270° indicates wind is coming from the west"
+
+  - name: Elev_deg
+    description: Elevation angle of the wind vector
+    unit: degrees
+    range: -60 to 60
+    data_type: float
+    notes:
+      - "Positive values indicate wind is coming from above the horizontal plane (downdraft)"
+      - "Negative values indicate wind is coming from below the horizontal plane (updraft)"
+      - "Effective elevation angle measurements are limited to ±60.0°."
+
+  - name: Press_Pa
+    description: Atmospheric pressure
+    unit: Pascals
+    data_type: float
+
+  - name: Temp_C
+    description: Air temperature
+    unit: degrees Celsius
+    data_type: float
+
+  - name: Hum_RH
+    description: Relative humidity
+    unit: percentage
+    range: 0 to 100
+    data_type: float
+
+  - name: SonicTemp_C
+    description: Sonic temperature (derived from speed of sound)
+    unit: degrees Celsius
+    data_type: float
+
+  - name: Error
+    description: Error value from the Anemometer
+    unit: meters per second
+    notes:
+      - "Non-zero values indicate unreliable data for that row"
+      - "Corresponds to the u_m_s value when an error occurs"
+    data_type: float
+
+notes:
+  - "Wind components (u, v, w) follow meteorological convention: positive u is eastward wind, positive v is northward wind, positive w is upward wind"
+  - "Azimuth_deg is measured clockwise from north"
