@@ -19,27 +19,6 @@ A modular Python system for logging weather data from an RM Young 81000V Anemome
 
 <div align="center">
 
-## 🚀 Installation
-
-</div>
-
-Clone the repository and install the required dependencies:
-
-```bash
-git clone https://github.com/erau-sangxing/Weather-Logger.git
-cd Weather-Logger
-```
-
-Get [uv](https://docs.astral.sh/uv/getting-started/installation/) and install the dependencies:
-
-```bash
-uv venv --python 3.11
-source .venv/bin/activate
-uv pip install -r requirements.txt
-```
-
-<div align="center">
-
 ## 👉 Applications
 
 </div>
@@ -62,6 +41,27 @@ And attach to any session using:
 screen -r weather_logger  # for the weather logger
 screen -r wifi_reconnect  # for the WiFi reconnect script
 screen -r rsync_wx       # for the rsync script
+```
+
+<div align="center">
+
+## 🚀 Installation
+
+</div>
+
+Clone the repository and install the required dependencies:
+
+```bash
+git clone https://github.com/erau-sangxing/Weather-Logger.git
+cd Weather-Logger
+```
+
+Get [uv](https://docs.astral.sh/uv/getting-started/installation/) and install the dependencies:
+
+```bash
+uv venv --python 3.11
+source .venv/bin/activate
+uv pip install -r requirements.txt
 ```
 
 <div align="center">
