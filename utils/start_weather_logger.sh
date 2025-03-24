@@ -1,11 +1,27 @@
 #!/bin/bash
 
-# Change to the weather dashboard directory
-cd /home/pi/Desktop/weather_logger || exit
-
 # Activate virtual environment
-source .venv/bin/activate
+source /home/pi/Desktop/weather_logger/.venv/bin/activate
 
-# Start the application inside a screen session
-screen -dmS weather_logger bash -c "uv run src/weather_station.py"
+# Add local bin directory to PATH
+export PATH=$PATH:/home/pi/.local/bin
+
+# Find uv executable
+UV_CMD=$(which uv)
+if [ -z "$UV_CMD" ]; then
+    echo "Error: uv command not found. Installing..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    UV_CMD=$(which uv)
+    if [ -z "$UV_CMD" ]; then
+        echo "Failed to install uv. Falling back to python directly."
+        python /home/pi/Desktop/weather_logger/src/weather_station.py
+    else
+        $UV_CMD run /home/pi/Desktop/weather_logger/src/weather_station.py
+    fi
+else
+    $UV_CMD run /home/pi/Desktop/weather_logger/src/weather_station.py
+fi
+
 echo "Weather Station Tester started in screen session: weather_logger"
+
+exec bash

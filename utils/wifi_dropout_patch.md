@@ -1,6 +1,6 @@
 # **Preventing Constant WiFi Dropouts on Raspberry Pi**
 
-This guide provides steps to prevent **constant WiFi dropouts** on a Raspberry Pi by setting up **passwordless SSH, cron jobs, WiFi auto-reconnect scripts, and static IP configuration**.
+This guide provides steps to prevent **constant WiFi dropouts** on a Raspberry Pi by setting up **passwordless SSH, systemd services, WiFi auto-reconnect scripts, and static IP configuration**.
 
 ---
 
@@ -34,18 +34,19 @@ sudo chown -R pi:pi /var/tmp/wx
 
 ---
 
-## **3. Setup Screen Sessions for Continuous Operation**
-To ensure continuous operation of all services, add the following lines to `/etc/rc.local` before `exit 0`:
+## **3. Setup Systemd Service for Continuous Operation**
+To ensure continuous operation of all services, create a systemd service file:
 
 ```sh
-# Start weather logger in a screen session
-nohup screen -dmS weather_logger /home/pi/Desktop/weather_logger/utils/start_weather_logger.sh &
+sudo cp utils/weather_logger.service /etc/systemd/system/weather_logger.service
+```
 
-# Start WiFi auto-reconnect in a screen session
-nohup screen -dmS wifi_reconnect /home/pi/Desktop/weather_logger/utils/wifi_auto_reconnect.sh &
+Enable and start the service:
 
-# Start rsync in a screen session (runs every 30 seconds)
-nohup screen -dmS rsync_wx /home/pi/Desktop/weather_logger/utils/rsync_var_tmp_wx.sh &
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable weather_logger.service
+sudo systemctl start weather_logger.service
 ```
 
 You can check the status of these screen sessions at any time using:
@@ -132,7 +133,7 @@ This configuration:
 
 ---
 
-## **6. Assign a Secondary Static IP**
+## **5. Assign a Secondary Static IP**
 To improve network reliability, assign a **static IP** alongside DHCP:
 
 ```sh
@@ -148,6 +149,52 @@ sudo nmcli connection modify "EagleNet 1" ipv4.never-default no
 ```sh
 sudo nmcli connection up "EagleNet 1"
 ```
+
+---
+
+## **6. Persistent Static IP for wlan1**
+
+This setup ensures `wlan1` keeps the static IP `10.33.229.250`, even if DHCP removes it.
+
+### **Files Created:**
+1. **Service:** `/etc/systemd/system/static-ip-wlan1.service`
+2. **Timer:** `/etc/systemd/system/static-ip-wlan1.timer`
+
+### **Service (`static-ip-wlan1.service`):**
+```ini
+[Unit]
+Description=Ensure wlan1 keeps static IP
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/bin/bash -c "ip addr show wlan1 | grep -q '10.33.229.250' || ip addr add 10.33.229.250/17 dev wlan1"
+RemainAfterExit=yes
+Type=oneshot
+```
+
+### **Timer (`static-ip-wlan1.timer`):**
+```ini
+[Unit]
+Description=Check and re-add static IP every 30 seconds
+
+[Timer]
+OnBootSec=10s
+OnUnitActiveSec=30s
+Unit=static-ip-wlan1.service
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### **Enable & Start the Timer:**
+```sh
+sudo systemctl daemon-reload
+sudo systemctl enable static-ip-wlan1.timer
+sudo systemctl start static-ip-wlan1.timer
+```
+
+This will check and re-add the IP every 30 seconds.
 
 ---
 

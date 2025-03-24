@@ -1,0 +1,20 @@
+[Unit]
+Description=Weather Logger Service Suite
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Start weather logger in a screen session
+ExecStart=/usr/bin/screen -dmS weather_logger /bin/bash -c '/home/pi/Desktop/weather_logger/utils/start_weather_logger.sh; exec bash'
+# Start WiFi reconnect script in a screen session  
+ExecStart=/usr/bin/screen -dmS wifi_reconnect /bin/bash -c '/home/pi/Desktop/weather_logger/utils/wifi_auto_reconnect.sh'
+# Start rsync script in a screen session
+ExecStart=/usr/bin/screen -dmS rsync_wx /bin/bash -c '/home/pi/Desktop/weather_logger/utils/rsync_var_tmp_wx.sh'
+User=pi
+Environment=TERM=xterm
+WorkingDirectory=/home/pi/Desktop/weather_logger
+
+[Install]
+WantedBy=multi-user.target
