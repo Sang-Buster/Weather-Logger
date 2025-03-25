@@ -16,7 +16,9 @@ CURRENT_DATE=$(date +%Y_%m_%d)
 CURRENT_FILE="${CURRENT_DATE}_weather_station_data.csv"
 
 while true; do
-    # Check if source file exists
+    CURRENT_DATE=$(date +%Y_%m_%d)
+    CURRENT_FILE="${CURRENT_DATE}_weather_station_data.csv"
+
     if [ ! -f "/var/tmp/wx/$CURRENT_FILE" ]; then
         echo "$(date): Source file /var/tmp/wx/$CURRENT_FILE does not exist!"
         sleep 60
@@ -25,7 +27,7 @@ while true; do
 
     # Get file size before sync
     SOURCE_SIZE=$(stat -c%s "/var/tmp/wx/$CURRENT_FILE" 2>/dev/null || echo "0")
-    
+
     # Modified rsync command to only sync today's file and append to existing data
     # Using passwordless SSH
     echo "$(date): Starting rsync for $CURRENT_FILE"
